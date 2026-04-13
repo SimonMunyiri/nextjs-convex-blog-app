@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { ThemeToggle } from "./theme-toggle";
+import { useConvexAuth } from "convex/react";
 
 export default function Navbar() {
+  const { isAuthenticated, isLoading } = useConvexAuth(); // Get authentication status and loading state
+
   return (
     <nav className="w-full py-5 flex items-center justify-between">
       <div className="flex items-center gap-8">
@@ -20,16 +23,35 @@ export default function Navbar() {
       </div>
 
       <div className="flex items-center gap-2">
-        <Link href="/auth/sign-up">
-          <Button size="xs" variant="outline">
-            Sign Up
+        {/*
+         * Determines which button to display based on user authentication
+         * status and loading state.
+         *
+         * - If the request is not loading and the user is authenticated,
+         *   display the logout button.
+         * - If the user is not authenticated, display the login/signup button.
+         */}
+        {isLoading ? null : isAuthenticated ? (
+          // Show logout button if authenticated
+          <Button size="xs" variant="outline" onClick={() => {}}>
+            Logout
           </Button>
-        </Link>
-        <Link href="/auth/login">
-          <Button size="xs" variant="outline">
-            Login
-          </Button>
-        </Link>
+        ) : (
+          // Show login/signup buttons if not authenticated
+          <>
+            <Link href="/auth/sign-up">
+              <Button size="xs" variant="outline">
+                Sign Up
+              </Button>
+            </Link>
+            <Link href="/auth/login">
+              <Button size="xs" variant="outline">
+                Login
+              </Button>
+            </Link>
+          </>
+        )}
+
         <ThemeToggle />
       </div>
     </nav>
